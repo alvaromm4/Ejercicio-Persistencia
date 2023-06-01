@@ -1,0 +1,95 @@
+import java.io.*;
+
+public class MatrixMultiplication {
+    public static void main(String[] args) {
+        String matriz1File = "matriz1.txt";
+        String matriz2File = "matriz2.txt";
+        String resultadoFile = "resultado.txt";
+
+        // Leer las matrices desde los archivos
+        int[][] matriz1 = leerMatriz(matriz1File);
+        int[][] matriz2 = leerMatriz(matriz2File);
+
+        // Multiplicar las matrices
+        int[][] resultado = multiplicarMatrices(matriz1, matriz2);
+
+        // Guardar el resultado en un archivo
+        guardarMatriz(resultado, resultadoFile);
+
+        System.out.println("La multiplicación de las matrices ha sido guardada en el archivo 'resultado.txt'.");
+    }
+
+    public static int[][] leerMatriz(String filename) {
+        int[][] matriz = null;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(filename));
+            String linea;
+            int filas = 0;
+            int columnas = 0;
+
+            // Contar las filas y columnas de la matriz
+            while ((linea = br.readLine()) != null) {
+                filas++;
+                String[] elementos = linea.split(","); // Suponemos que los elementos están separados por comas
+                columnas = elementos.length;
+            }
+
+            matriz = new int[filas][columnas];
+
+            // Leer los elementos y llenar la matriz
+            br = new BufferedReader(new FileReader(filename));
+            int fila = 0;
+            while ((linea = br.readLine()) != null) {
+                String[] elementos = linea.split(",");
+                for (int columna = 0; columna < elementos.length; columna++) {
+                    matriz[fila][columna] = Integer.parseInt(elementos[columna]);
+                }
+                fila++;
+            }
+
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return matriz;
+    }
+
+    public static void guardarMatriz(int[][] matriz, String filename) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
+            for (int fila = 0; fila < matriz.length; fila++) {
+                for (int columna = 0; columna < matriz[fila].length; columna++) {
+                    bw.write(Integer.toString(matriz[fila][columna]));
+                    if (columna < matriz[fila].length - 1) {
+                        bw.write(",");
+                    }
+                }
+                bw.newLine();
+            }
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static int[][] multiplicarMatrices(int[][] matriz1, int[][] matriz2) {
+        int filas1 = matriz1.length;
+        int columnas1 = matriz1[0].length;
+        int columnas2 = matriz2[0].length;
+
+        int[][] resultado = new int[filas1][columnas2];
+
+        for (int fila = 0; fila < filas1; fila++) {
+            for (int columna = 0; columna < columnas2; columna++) {
+                int sum = 0;
+                for (int i = 0; i < columnas1; i++) {
+                    sum += matriz1[fila][i] * matriz2[i][columna];
+                }
+                resultado[fila][columna] = sum;
+            }
+        }
+
+        return resultado;
+    }
+}
